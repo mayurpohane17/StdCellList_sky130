@@ -53,42 +53,45 @@ PicoRV32 is free and open hardware licensed under the ISC license. All features 
 
 Thus, the first step in magic layout tool is to create a bounding box with a height of 2.72 and width according to the size of cell. This can be done by using command property FIXED_BBOX {0 0 w 272} , here the width(w) is variable, in magic tkcon window.
 
-After the box is defined define the ground and power segments (in metal 1), the respective contacts and finally the layout of the logic part. Same procedure can be followed for all standard cell layout.
+After the box is defined define the ground and power segments (in metal 1), the respective contacts and finally the layout of the logic part. Same procedure can be followed for all standard cell layout.The metal tracks of same layer for same purpose should have same width. If a metal1 power pin is 2μm wide, all cells in the library must use 2μm wide metal1 power connections. Power and ground pins should have same width and should run in the same directions – all horizontal or all vertical.
 
 
-Note:
-The layout (also included as the part of this repo, viz., sky130_inv.mag) can be viewed in magic layout window as magic -T sky130A.tech sky130_inv.mag &
+The already created layouts can be viewed using 'magic -T sky130A.tech name.mag' here name represents the mag file name.
 
 ### Create port definition
-Once the layout is ready, the next step is extracting LEF file for the cell. However, certain properties and definitions need to be set to the pins of the cell which aid the placer and router tool. For LEF files, a cell that contains ports is written as a macro cell, and the ports are the declared PINs of the macro. Our objective is to extract LEF from a given layout (here of a simple CMOS inverter) in standard format. Defining port and setting correct class and use attributes to each port is the first step. The easiest way to define a port is through Magic Layout window and following are the steps:
 
-In Magic Layout window, first source the .mag file for the design (here inverter). Then Edit >> Text which opens up a dialogue box.
-alt text
+After the layout is ready, the next step is extracting the LEF file for the cell. However, certain definations and properties are required to be set for the pins of the cell which helps the placement and routeing tool. For LEF files, a cell that contains ports is written as a macro cell, and the ports are the declared PINs of the macro. Our objective is to extract LEF from a given layout in standard format. Defining port and setting correct class and use attributes to each port. To define a port:
 
-For each layer (to be turned into port), make a box on that particular layer and input a label name along with a sticky label of the layer name with which the port needs to be associated. Ensure the Port enable checkbox is checked and default checkbox is unchecked as shown in the figure:
-alt text
+    'Edit >> Text' this opens a dialog box. 
 
-In the above two figures, port A (input port) and port Y (output port) are taken from locali (local interconnect) layer. Also, the number in the textarea near enable checkbox defines the order in which the ports will be written in LEF file (0 being the first).
+
+For each layer (to be used as port), make a box on that particular layer and input a label name along with a sticky label of the layer name with which the port needs to be associated. Ensure the Port enable checkbox is checked and default checkbox is unchecked as shown in the figure:
+
+----img of text box
+
+In the above two figures, port A (input port) and port Y (output port) are taken from locali (local interconnect) layer. 
 
 For power and ground layers, the definition could be same or different than the signal layer. Here, ground and power connectivity are taken from metal1 (Notice the sticky label)
 VPWR	VGND
-Set port class and port use attributes for a layout
-Post port definition, the next step is setting port class and port use attributes. The "class" and "use" properties of the port have no internal meaning to magic but are used by the LEF and DEF format read and write routines, and match the LEF/DEF CLASS and USE properties for macro cell pins. Valid classes are: default, input, output, tristate, bidirectional, inout, feedthrough, and feedthru. Valid uses are: default, analog, signal, digital, power, ground, and clock. These attributes are set in tkcon window (after selecting each port on layout window. A keyboard shortcut would be repeatedly pressing s till that port gets highlighed) as:
+#### Set port class and port use attributes for a layout
+After port definition, the next step is setting port class and port use attributes. The "class" and "use" properties of the port have no internal meaning to magic but are used by the LEF and DEF format read and write routines, and match the LEF/DEF CLASS and USE properties for macro cell pins. Valid classes are: default, input, output, tristate, bidirectional, inout, feedthrough, and feedthru. Valid uses are: default, analog, signal, digital, power, ground, and clock. These attributes are set in tkcon window (after selecting each port on layout window. A keyboard shortcut would be repeatedly pressing s till that port gets highlighed) as:
 
-alt text
 
-Additional:
-You can delete or remove any port by first selecting the port (key s) and then executing below two commands in order (in tkcon window):
+----img of tkon window
 
-port remove
-label erase
-Defining LEF properties and extracting LEF file
-Certain properties needs to be set before writing the LEF. As mentioned before, these values are fetched by placer and router to determine, for instance, site where a cell needs to be placed. Macro cell properties common to the LEF/DEF definition but that have no corresponding database interpretation in magic are retained using the cell property method in magic. There are specific property names associated with the LEF format. Once the properties are set, lef write command writes the LEF file with the same nomenclature as that of the layout (.mag) file.
+To delete or remove any port by first selecting the port (key s) and then executing below two commands in order (in tkcon window):
 
-alt text
+          port remove
+          erase labels
+          
+          
+### Defining LEF properties and extracting LEF file
+Certain properties needs to be set before writing the LEF. As mentioned before, these values are fetched by placement and routing to determine, for instance, site where a cell needs to be placed. Macro cell properties common to the LEF/DEF definition but that have no corresponding database interpretation in magic are retained using the cell property method in magic. There are specific property names associated with the LEF format. Once the properties are set, 'lef write' command writes the LEF file.
 
-Plugging custom LEF to openlane flow
-If a new custom cell needs to be plugged into openlane flow, include the lefs (the one extracted in Step-5) as below:
+
+
+### Plugging custom LEF to openlane flow
+If a new custom cell needs to be plugged into openlane flow, include the lefs as below:
 
 In the design's config.tcl file add the below line to point to the lef location which is required during spice extraction.
 
@@ -102,18 +105,7 @@ Run the interactive flow as described here.
 
 Note: A sample inverter magic file (sky130_inv.mag) has been included as a reference resource.
 
-− All metal tracks of the same layer (metal1, metal2, etc) for the same purpose (signal or
-power) must have the same width. If, for example, a metal1 track for signal connection is
-0.5μm wide, then all other signal connections in metal1 in the library must also be 0.5μm
-wide. If a metal1 power pin is 2μm wide, all cells in the library must use 2μm wide metal1
-power connections.
-− All power/ground pins should have the same width and should run in the same directions – all
-horizontal or all vertical.
-− Power/ground pins should be in the form of rail at the top/bottom ends of the cell.
-− Attempts must be made to lay signal tracks of the same layer in the same direction.
-− For any two adjacent signal track in the same metal layer running in the same direction,
-center-to-center pitch (defined below) must be either the same or an integer multiply of a
-minimal pitch value (called routing pitch).
+− 
 
 
 ## Verification of generated Liberty File with OpenLane
