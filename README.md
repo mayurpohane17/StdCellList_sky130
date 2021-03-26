@@ -16,6 +16,19 @@ This repository contains the standard cells designed for the characterization fo
     - [Routing:](#routing)
   - [Future Works:](#future-works)
 
+Standard Cells Designed list
+
+1.Nand2
+2.Nand3
+3.Nand4
+4.o21ai
+5.inv
+6.inv_8x
+7.buf2
+8.conb
+
+
+
 Standard cell design and characterization in openlane
 Objective
 The goal of the project is to design a single height standard cell and plug this custom cell into a more complex design and perform it's PnR in the openlane flow. The standard cell chosen is a basic CMOS inverter and the design into which it's plugged into is a pre-built picorv32a core.
@@ -113,7 +126,7 @@ minimal pitch value (called routing pitch).
 ## Verification of generated Liberty File with OpenLane
 ### OpenLane Requirements
 * Install OpenLane as mentioned in repo [OpenLANE Built Script](https://github.com/nickson-jose/openlane_build_script)
-* [OpenLane Workshop repo for understanding openLane flow](https://github.com/harshsrigh/openlane_sky130nm_vsdworkshop)
+* [OpenLane Workshop repo for understanding openLane flow](https://github.com/mayurpohane17/OpenLANE-Sky130-Workshop)
 ### Custom Cells and Skywater 130nm Cells:
 
   * **Skywater Library cells**: sky130_fd_sc_hd__buf_2, and sky130_fd_sc_hd__conb_1.
