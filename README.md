@@ -162,13 +162,9 @@ minimal pitch value (called routing pitch).
 * Improve the layout of custom cells for the routing(375 iter-> 81 Overflows)
 
 # Acknowledgement
+- Harsh Shukla
 - Kunal Ghosh, Co-founder, VSD Corp. Pvt. Ltd
-- Openlane team, Efabless corporation
-- Tim Edwards, Senior Vice President of Analog and Design at efabless corporation
-- Nickson Jose, VLSI Engineer
-
-- Prithivi Raj K, National Institute of Technology Tiruchirapalli
 
 # Contact Information
-- Praharsha Mahurkar, BE Electronics and Telecommunication, Maharashtra Institute of Technology, Pune, 	praharshapm@gmail.com
+- Mayur Pohane, mayur17pohane@gmail.com
 - Kunal Ghosh, Co-founder, VSD Corp. Pvt. Ltd. kunalpghosh@gmail.com
