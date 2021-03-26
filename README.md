@@ -50,7 +50,7 @@ PicoRV32 is free and open hardware licensed under the ISC license. All features 
 
  [Pre_layout](Standard_cells/nand2_1x/nand2.spice)  |  [Post_layout](Standard_Cells/nand2_1x/sky130_vsdnand2_1x.spice)
  
- <img src="Images/Layouts/nand2_1x_layout.png" alt="config" width="300"/>
+ <img src="Images/Layouts/nand2_1x_layout.png" alt="config" width="400"/>
 
 ### Magic
   The magic tool can be invoked using the following command `magic -T sky130A.tech` where the sky130A.tech is the technology file has also been included in repo. The proposed designs are single height standard cell, so the dimensions needs to be a multiple of the single height place site.
@@ -70,7 +70,7 @@ Certain definations and properties are required to be set for the pins of the ce
 
 For each layer (to be used as port), make a box on that particular layer and input a label name along with a sticky label of the layer name with which the port needs to be associated. Ensure the Port enable checkbox is checked and default checkbox is unchecked as shown in the figure:
 
- <img src="Images/Layouts/port_name.PNG" alt="config" width="300"/>
+ <img src="Images/Layouts/port_name.PNG" alt="config" width="600"/>
 
 In the above two figures, port A (input port) and port Y (output port) are taken from locali (local interconnect) layer. 
 
@@ -80,7 +80,7 @@ VPWR	VGND
 
 After port definition, the next step is setting port class and port use attributes. The "class" and "use" properties of the port have no internal meaning to magic but are used by the LEF and DEF format read and write routines, and match the LEF/DEF CLASS and USE properties for macro cell pins. Valid classes are: default, input, output, tristate, bidirectional, inout, feedthrough, and feedthru. Valid uses are: default, analog, signal, digital, power, ground, and clock. These attributes are set in tkcon window (after selecting each port on layout window. A keyboard shortcut would be repeatedly pressing s till that port gets highlighed) as:
 
- <img src="Images/Layouts/tkon_port.PNG" alt="config" width="300"/>
+ <img src="Images/Layouts/tkon_port.PNG" alt="config" width="600"/>
 
 To delete or remove any port by first selecting the port (key s) and then executing below two commands in order (in tkcon window):
 
