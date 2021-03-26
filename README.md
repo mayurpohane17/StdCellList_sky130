@@ -1,5 +1,5 @@
 # vsdStdCellList_sky130
-This repository contains the standard cells designed for the characterization for the following tool ----- and the cells designed here are used as input to the characterization flow.
+This repository contains the standard cells designed for the characterization which uses NGSPICE for simulation , Magic for Layout, and Python scripts in conjunction with NGSPICE control commands to generate timing liberty files and the cells designed here are used as input to the characterization flow.
 
 
 
@@ -15,46 +15,51 @@ This repository contains the standard cells designed for the characterization fo
     - [CTS](#cts)
     - [Routing:](#routing)
   - [Future Works:](#future-works)
+  
+# Custom Standard Cell Design using Skywater 130nm PDK
 
-Standard Cells Designed list
+## Standard Cells Designed list
 
 1.Nand2
+
 2.Nand3
+
 3.Nand4
+
 4.o21ai
+
 5.inv
+
 6.inv_8x
+
 7.buf2
+
 8.conb
 
 
-
-Standard cell design and characterization in openlane
-Objective
-The goal of the project is to design a single height standard cell and plug this custom cell into a more complex design and perform it's PnR in the openlane flow. The standard cell chosen is a basic CMOS inverter and the design into which it's plugged into is a pre-built picorv32a core.
-
-About PicoRV32
+## About PicoRV32
 PicoRV32 is a CPU core that implements the RISC-V RV32IMC Instruction Set. It can be configured as RV32I, RV32IC, RV32IM, or RV32IMC core; where the suffixes stand for:
 
-M - Multiply extension
 I - Base Integer Instructions
+M - Multiply extension
 C - Compressed Instructions
-PicoRV32 is free and open hardware licensed under the ISC license. All features and data-sheet related to picoRV32 core can be obtained here.
+PicoRV32 is free and open hardware licensed under the ISC license. All features and data-sheet related to picoRV32 core can be obtained [here](https://www.github.com/cliffordwolf/picorv32).
 
-Standard cell layout design in Magic
-The proposed inverter for the design is a single height standard cell, so the dimensions needs to be a multiple of the single height place site; which for sky130 node has a nomenclature of unithd with dimensions(in microns): 0.46 x 2.72 (width x height) for sky130_fd_sc_hd PDK variant. The magic tool is invoked with sky130 tech file as magic -T sky130A.tech & (the magic tech file (sky130A.tech) has also been included in this repo under /libs as reference).
 
-Thus, the first step in magic layout tool is to create a bounding box with a width of 1.38 (3 x width(unithd)) and height of 2.72. This can be done by using command property FIXED_BBOX {0 0 138 272} in magic tkcon window.
+## Standard cell layout design in Magic
 
-alt text
+### Magic
+  The magic tool can be invoked using the following command 'magic -T sky130A.tech' where the sky130A.tech is the technology file & (the magic tech file (sky130A.tech) has also been included in this repo. The proposed designs are single height standard cell, so the dimensions needs to be a multiple of the single height place site; which for sky130 node has a nomenclature of unithd with dimensions(in microns): 0.46 x 2.72 (width x height) for sky130_fd_sc_hd PDK variant.
 
-This is followed by defining the ground and power segments (in metal 1), the respective contacts and finally the layout of the logic part. Same procedure can be followed for any standard cell layout.
-alt text
+Thus, the first step in magic layout tool is to create a bounding box with a height of 2.72 and width according to the size of cell. This can be done by using command property FIXED_BBOX {0 0 w 272} , here the width(w) is variable, in magic tkcon window.
+
+After the box is defined define the ground and power segments (in metal 1), the respective contacts and finally the layout of the logic part. Same procedure can be followed for all standard cell layout.
+
 
 Note:
 The layout (also included as the part of this repo, viz., sky130_inv.mag) can be viewed in magic layout window as magic -T sky130A.tech sky130_inv.mag &
 
-Create port definition
+### Create port definition
 Once the layout is ready, the next step is extracting LEF file for the cell. However, certain properties and definitions need to be set to the pins of the cell which aid the placer and router tool. For LEF files, a cell that contains ports is written as a macro cell, and the ports are the declared PINs of the macro. Our objective is to extract LEF from a given layout (here of a simple CMOS inverter) in standard format. Defining port and setting correct class and use attributes to each port is the first step. The easiest way to define a port is through Magic Layout window and following are the steps:
 
 In Magic Layout window, first source the .mag file for the design (here inverter). Then Edit >> Text which opens up a dialogue box.
@@ -67,7 +72,6 @@ In the above two figures, port A (input port) and port Y (output port) are taken
 
 For power and ground layers, the definition could be same or different than the signal layer. Here, ground and power connectivity are taken from metal1 (Notice the sticky label)
 VPWR	VGND
-alt text	alt text
 Set port class and port use attributes for a layout
 Post port definition, the next step is setting port class and port use attributes. The "class" and "use" properties of the port have no internal meaning to magic but are used by the LEF and DEF format read and write routines, and match the LEF/DEF CLASS and USE properties for macro cell pins. Valid classes are: default, input, output, tristate, bidirectional, inout, feedthrough, and feedthru. Valid uses are: default, analog, signal, digital, power, ground, and clock. These attributes are set in tkcon window (after selecting each port on layout window. A keyboard shortcut would be repeatedly pressing s till that port gets highlighed) as:
 
@@ -98,17 +102,6 @@ Run the interactive flow as described here.
 
 Note: A sample inverter magic file (sky130_inv.mag) has been included as a reference resource.
 
-Observations
-The custom inverter successfully included in the picorv32a design. Below is the final routed picorv32a design with the custom cell zoomed in and highlighted.
-
-alt text
-
-Challenges
-The biggest challenge was with the legalization of the cell. Initial iteration showed illegal positioning of the cell away from the standard cell rails.
-alt text
-
-Upon closer inspection, the issue seemed to be with the dimensions of the drawn power and ground rails and also with the positioning of local1 -> metal1 contacts which was then corrected for further iterations.
-
 − All metal tracks of the same layer (metal1, metal2, etc) for the same purpose (signal or
 power) must have the same width. If, for example, a metal1 track for signal connection is
 0.5μm wide, then all other signal connections in metal1 in the library must also be 0.5μm
@@ -124,6 +117,7 @@ minimal pitch value (called routing pitch).
 
 
 ## Verification of generated Liberty File with OpenLane
+
 ### OpenLane Requirements
 * Install OpenLane as mentioned in repo [OpenLANE Built Script](https://github.com/nickson-jose/openlane_build_script)
 * [OpenLane Workshop repo for understanding openLane flow](https://github.com/mayurpohane17/OpenLANE-Sky130-Workshop)
@@ -136,9 +130,9 @@ minimal pitch value (called routing pitch).
 ### Synthesis
 * Designed used for verification: picorv32a   
 * Edit config.tcl to -      
-  <img src="images/configtcl.png" alt="config" width="450"/>
+  <img src="Images/configtcl.png" alt="config" width="450"/>
 * Synthesis Result:   
-  <img src="images/synthesis.png" alt="config" width="300"/>
+  <img src="Images/synthesis.png" alt="config" width="300"/>
 
 ### Floor-planning
 * Command: `run_floorplan`   
@@ -147,12 +141,12 @@ minimal pitch value (called routing pitch).
 ### Placement
  * Command: `run_placement`
  * Layout:    
-    <img src="images/placement.png" alt="placement" width="450"/>
+    <img src="Images/placement.png" alt="placement" width="450"/>
 
 ### CTS
 * Command: `run_cts`
 * Layout:   
-  <img src="images/cts.png" alt="placement" width="350"/>
+  <img src="Images/cts.png" alt="placement" width="350"/>
 
 ### Routing:
 * Command: `run_routing`
@@ -161,10 +155,10 @@ minimal pitch value (called routing pitch).
 ## Future Works: 
 * Improve the layout of custom cells for the routing(375 iter-> 81 Overflows)
 
-# Acknowledgement
+## Acknowledgement
 - Harsh Shukla
 - Kunal Ghosh, Co-founder, VSD Corp. Pvt. Ltd
 
-# Contact Information
+## Contact Information
 - Mayur Pohane, mayur17pohane@gmail.com
 - Kunal Ghosh, Co-founder, VSD Corp. Pvt. Ltd. kunalpghosh@gmail.com
